@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Digital Greeting Cards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #e0dcdc;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 40px 20px 20px 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-family: 'Luckiest Guy', cursive;
+            color: #ff6b6b;
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px #fff;
+        }
+
+        p.subtitle {
+            margin: 0;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .catalog-grid {
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card-preview-node {
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            border: 1px solid #d1d9e6;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-preview-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+
+        .thumbnail-area {
+            width: 100%;
+            height: 200px;
+            background-color: #f9f9f9;
+            overflow: hidden;
+            position: relative;
+            border-bottom: 1px solid #eee;
+        }
+
+        .thumbnail-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .placeholder-thumb {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Luckiest Guy', cursive;
+            color: #b3cde0;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .card-details {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .card-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #444;
+            margin: 0 0 5px 0;
+        }
+
+        .card-tag {
+            font-size: 0.85rem;
+            color: #ff6b6b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>My Greeting Cards</h1>
+        <p class="subtitle">Select a card below to open it</p>
+    </header>
+
+    <main class="catalog-grid">
+
+        <a href="./fathers-day/" class="card-preview-node">
+            <div class="thumbnail-area">
+                <img src="./fathers-day/birthday-cover.png" alt="Father's Day Card Cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="placeholder-thumb" style="display:none;">Father's Day</div>
+            </div>
+            <div class="card-details">
+                <div class="card-title">Father's Day Card</div>
+                <div class="card-tag">Family</div>
+            </div>
+        </a>
+
+        </main>
+
+</body>
+</html>
