@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Birthday Card for My Wife</title>
+    <style>
+        body { 
+            margin: 0; display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; background: #e0dcdc; overflow: hidden; perspective: 2500px; 
+            font-family: 'Palatino Linotype', 'Georgia', serif;
+        }
+
+        .card-container { width: 320px; height: 480px; position: relative; transform-style: preserve-3d; }
+
+        .page {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-sizing: border-box; padding: 40px; border: 1px solid #d1d9e6;
+        }
+
+        .inside { background: #ffffff; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+
+        .cover { transform-origin: left; z-index: 10; transform-style: preserve-3d; cursor: grab; }
+
+        .front-face { 
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; overflow: hidden; border: 1px solid #b3cde0;
+            background-color: #e0f2f1; /* Light blue base */
+        }
+
+        .front-face img { width: 100%; height: 100%; object-fit: cover; }
+
+        .back-face { 
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            background: white; transform: rotateY(180deg); border: 1px solid #ccc;
+        }
+
+        h2 { color: #4a6fa5; }
+        p { color: #555; line-height: 1.6; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="card-container">
+        <!-- Inside Page -->
+        <div class="page inside" id="inside">
+            <h2>Happy Birthday, My Love</h2>
+            <p>You are the heartbeat of our home. I am so lucky to share this life with you. Thank you for your strength, your kindness, and the love you pour into everything you do. I love you!</p>
+        </div>
+        
+        <!-- Cover -->
+        <div class="page cover" id="cover">
+            <div class="front-face">
+                <!-- Ensure floral-cover.png is in the same folder -->
+                <img src="birthday-cover.png" alt="Floral Birthday Cover">
+            </div>
+            <div class="back-face"></div>
+        </div>
+    </div>
+
+    <!-- Add your audio file in the same folder if desired -->
+    <audio id="bgMusic" src="birthday-music.mp3"></audio>
+
+    <script>
+        const cover = document.getElementById('cover');
+        const inside = document.getElementById('inside');
+        const audio = document.getElementById('bgMusic');
+        let isDragging = false;
+        let startX = 0;
+        let currentRotation = 0;
+
+        function handleMove(clientX) {
+            if (!isDragging) return;
+            let deltaX = startX - clientX;
+            let rotation = (deltaX / 300) * 180;
+            rotation = Math.max(0, Math.min(180, rotation));
+            
+            cover.style.transform = `rotateY(-${rotation}deg)`;
+            currentRotation = rotation;
+
+            // Dynamic shadow effect
+            let shadow = 1 - (rotation / 180);
+            inside.style.boxShadow = `${15 * shadow}px 5px 25px rgba(0,0,0,${0.2 * shadow})`;
+        }
+
+        cover.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX + (currentRotation / 180 * 300);
+            // Attempt to play music on interaction
+            audio.play().catch(() => {});
+        });
+
+        window.addEventListener('touchmove', (e) => { handleMove(e.touches[0].clientX); });
+        window.addEventListener('touchend', () => { isDragging = false; });
+        
+        // Mouse support for testing on desktop
+        cover.addEventListener('mousedown', (e) => { 
+            isDragging = true; 
+            startX = e.clientX + (currentRotation / 180 * 300);
+        });
+        window.addEventListener('mousemove', (e) => { handleMove(e.clientX); });
+        window.addEventListener('mouseup', () => { isDragging = false; });
+    </script>
+</body>
+</html>
