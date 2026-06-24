@@ -70,7 +70,7 @@
 
         .thumbnail-area {
             width: 100%;
-            height: 320px; /* Increased height to showcase the card format nicely */
+            height: 320px;
             background-color: #f9f9f9;
             overflow: hidden;
             position: relative;
@@ -85,7 +85,7 @@
         }
 
         .card-preview-node:hover .thumbnail-area img {
-            transform: scale(1.03); /* Subtle zoom effect on hover */
+            transform: scale(1.03);
         }
 
         .placeholder-thumb {
@@ -98,6 +98,9 @@
             color: #b3cde0;
             font-size: 1.5rem;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         .card-details {
@@ -111,14 +114,15 @@
             font-size: 1.2rem;
             color: #444;
             margin: 0 0 5px 0;
+            text-transform: uppercase; /* Guarantees all titles show in ALL CAPS */
         }
 
-        .card-tag {
-            font-size: 0.85rem;
-            color: #ff6b6b;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .loading-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            padding: 40px;
         }
     </style>
 </head>
@@ -129,20 +133,79 @@
         <p class="subtitle">Select a card below to open it</p>
     </header>
 
-    <main class="catalog-grid">
+    <main class="catalog-grid" id="catalogGrid">
+        <div class="loading-message" id="loadingStatus">Searching repository for cards...</div>
+    </main>
 
-        <a href="./dad-day-2026/" class="card-preview-node">
-            <div class="thumbnail-area">
-                <img src="./dad-day-2026/birthday-cover.png" alt="Father's Day Card Cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="placeholder-thumb" style="display:none;">Father's Day</div>
-            </div>
-            <div class="card-details">
-                <div class="card-title">Father's Day Card</div>
-                <div class="card-tag">Family</div>
-            </div>
-        </a>
+    <script>
+        async function loadCardCatalog() {
+            const gridContainer = document.getElementById('catalogGrid');
+            const loadingStatus = document.getElementById('loadingStatus');
 
-        </main>
+            // Automatically detects your username and repository name from the live URL
+            const currentUrl = window.location.hostname; 
+            const pathParts = window.location.pathname.split('/').filter(part => part.length > 0);
+            
+            const username = currentUrl.split('.')[0];
+            const repoName = pathParts[0] || 'cards'; 
+
+            // GitHub Public API endpoint to scan the root contents
+            const apiEndpoint = `https://api.github.com/repos/${username}/${repoName}/contents/`;
+
+            try {
+                const response = await fetch(apiEndpoint);
+                if (!response.ok) throw new Error('Could not read repository data');
+                
+                const contents = await response.ok ? await response.json() : [];
+                
+                // Clear out the loading notice
+                gridContainer.innerHTML = '';
+
+                // Filter out everything except directories/folders
+                const folders = contents.filter(item => item.type === 'dir');
+
+                if (folders.length === 0) {
+                    gridContainer.innerHTML = '<div class="loading-message">No card folders discovered yet.</div>';
+                    return;
+                }
+
+                folders.forEach(folder => {
+                    const folderName = folder.name;
+
+                    // Convert hyphens into spaces and translate strings to ALL CAPS
+                    const titleText = folderName.replace(/-/g, ' ').toUpperCase();
+
+                    // Formulate paths pointing toward subfolder items
+                    const subfolderLink = `./${folderName}/`;
+                    const coverImgSrc = `./${folderName}/birthday-cover.png`;
+
+                    // Generate the complete responsive node structure
+                    const cardNode = document.createElement('a');
+                    cardNode.href = subfolderLink;
+                    cardNode.className = 'card-preview-node';
+
+                    cardNode.innerHTML = `
+                        <div class="thumbnail-area">
+                            <img src="${coverImgSrc}" alt="${titleText}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="placeholder-thumb" style="display:none;">${titleText}</div>
+                        </div>
+                        <div class="card-details">
+                            <div class="card-title">${titleText}</div>
+                        </div>
+                    `;
+
+                    gridContainer.appendChild(cardNode);
+                });
+
+            } catch (error) {
+                console.error(error);
+                loadingStatus.textContent = 'Failed to load catalog automatically from GitHub.';
+            }
+        }
+
+        // Initialize script execution on page initialization
+        document.addEventListener('DOMContentLoaded', loadCardCatalog);
+    </script>
 
 </body>
 </html>
