@@ -70,17 +70,20 @@
 
         .thumbnail-area {
             width: 100%;
-            height: 320px;
-            background-color: #f9f9f9;
+            height: 380px; /* Increased slightly to match card proportions well */
+            background-color: #f9f9f9; /* Match card edge backdrops if needed */
             overflow: hidden;
             position: relative;
             border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .thumbnail-area img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain; /* Prevents cropping by sealing constraints within margins */
             transition: transform 0.3s ease;
         }
 
@@ -106,6 +109,7 @@
         .card-details {
             padding: 15px;
             text-align: center;
+            background: #ffffff;
         }
 
         .card-title {
@@ -113,8 +117,8 @@
             font-weight: 600;
             font-size: 1.2rem;
             color: #444;
-            margin: 0 0 5px 0;
-            text-transform: uppercase; /* Guarantees all titles show in ALL CAPS */
+            margin: 0;
+            text-transform: uppercase;
         }
 
         .loading-message {
@@ -142,26 +146,21 @@
             const gridContainer = document.getElementById('catalogGrid');
             const loadingStatus = document.getElementById('loadingStatus');
 
-            // Automatically detects your username and repository name from the live URL
             const currentUrl = window.location.hostname; 
             const pathParts = window.location.pathname.split('/').filter(part => part.length > 0);
             
             const username = currentUrl.split('.')[0];
             const repoName = pathParts[0] || 'cards'; 
 
-            // GitHub Public API endpoint to scan the root contents
             const apiEndpoint = `https://api.github.com/repos/${username}/${repoName}/contents/`;
 
             try {
                 const response = await fetch(apiEndpoint);
                 if (!response.ok) throw new Error('Could not read repository data');
                 
-                const contents = await response.ok ? await response.json() : [];
-                
-                // Clear out the loading notice
+                const contents = await response.json();
                 gridContainer.innerHTML = '';
 
-                // Filter out everything except directories/folders
                 const folders = contents.filter(item => item.type === 'dir');
 
                 if (folders.length === 0) {
@@ -171,15 +170,10 @@
 
                 folders.forEach(folder => {
                     const folderName = folder.name;
-
-                    // Convert hyphens into spaces and translate strings to ALL CAPS
                     const titleText = folderName.replace(/-/g, ' ').toUpperCase();
-
-                    // Formulate paths pointing toward subfolder items
                     const subfolderLink = `./${folderName}/`;
                     const coverImgSrc = `./${folderName}/birthday-cover.png`;
 
-                    // Generate the complete responsive node structure
                     const cardNode = document.createElement('a');
                     cardNode.href = subfolderLink;
                     cardNode.className = 'card-preview-node';
@@ -203,7 +197,6 @@
             }
         }
 
-        // Initialize script execution on page initialization
         document.addEventListener('DOMContentLoaded', loadCardCatalog);
     </script>
 
